@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import eyeIcon from './assets/icons/eye.svg';
 import type { ChangeEventHandler } from 'react';
 import './App.css';
 import {
@@ -8,7 +9,6 @@ import {
   Input,
   Text,
   Flex,
-  Divider,
   Table,
   Thead,
   Tbody,
@@ -23,6 +23,17 @@ function App() {
   const [screenHeight, setScreenHeight] = useState<number>();
   const [screenWidth, setScreenWidth] = useState<number>();
   const [distanceToScreen, setDistanceToScreen] = useState<number>();
+
+  const [eyeIconImage, setEyeIcon] = useState<HTMLImageElement>();
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = eyeIcon;
+    img.onload = () => {
+      setEyeIcon(img);
+    };
+  }, []);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleHeightChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (e.target.value === '') {
@@ -110,9 +121,83 @@ function App() {
     }
   }, [calculatedDiagonalPiexels, centimeterPerDegree]);
 
+  const screenSizeInDegree = useMemo(() => {
+    if (calculatedDiagonalScreenSize && distanceToScreen) {
+      return (
+        arcTanInDegrees(calculatedDiagonalScreenSize / 2 / distanceToScreen) * 2
+      );
+    }
+  }, [distanceToScreen, calculatedDiagonalScreenSize]);
+
   function getTanFromDegrees(degrees: number) {
     return Math.tan((degrees * Math.PI) / 180);
   }
+
+  function arcTanInDegrees(x: number) {
+    return Math.atan(x) * (180 / Math.PI);
+  }
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+
+    if (canvas && ctx) {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // width and height of canvas
+      const width = canvas.width;
+      const height = canvas.height;
+
+      if (!distanceToScreen || !calculatedDiagonalScreenSize) {
+        return;
+      }
+
+      // convertion scale from cm to px
+      const scale = Math.min(
+        (height - 50) / distanceToScreen,
+        width / calculatedDiagonalScreenSize,
+      );
+
+      const distanceToScreenInPx = distanceToScreen * scale;
+      const screenSizeInPx = calculatedDiagonalScreenSize * scale;
+
+      console.log('distanceToScreenInPx', distanceToScreenInPx);
+      console.log('screenSizeInPx', screenSizeInPx);
+
+      console.log('eyeIcon', eyeIconImage);
+
+      // 三角形の描画
+      ctx.beginPath();
+      ctx.moveTo(0, 0); // 左上の頂点
+      ctx.lineTo(screenSizeInPx / 2, distanceToScreenInPx); // 下の頂点
+      ctx.lineTo(screenSizeInPx, 0); // 右上の頂点
+      ctx.closePath();
+      ctx.stroke();
+
+      // 三角形の間の角度表示の描画
+      const angle = Math.atan(screenSizeInPx / 2 / distanceToScreenInPx);
+      ctx.beginPath();
+      ctx.arc(
+        screenSizeInPx / 2,
+        distanceToScreenInPx,
+        30,
+        -Math.PI / 2 - angle,
+        -Math.PI / 2 + angle,
+      );
+      ctx.stroke();
+
+      if (eyeIconImage) {
+        ctx.drawImage(
+          eyeIconImage,
+          screenSizeInPx / 2 - 15,
+          distanceToScreenInPx,
+          30,
+          30,
+        );
+      }
+    }
+  }, [distanceToScreen, calculatedDiagonalScreenSize]);
 
   return (
     <>
@@ -176,8 +261,6 @@ function App() {
             </Box>
           </VStack>
 
-          <Divider orientation="vertical" />
-
           <VStack id="result-area" spacing={4} flexGrow="1" pt={6}>
             <Text>結果</Text>
             <Table variant="simple" w="80%">
@@ -206,22 +289,18 @@ function App() {
                 </Tr>
                 <Tr>
                   <Td>スクリーンが占める視野角</Td>
-                  <Td>
-                    {(calculatedDiagonalScreenSize &&
-                      centimeterPerDegree &&
-                      (
-                        calculatedDiagonalScreenSize / centimeterPerDegree
-                      ).toFixed()) ??
-                      '-'}
-                  </Td>
+                  <Td>{screenSizeInDegree?.toFixed(2) ?? '-'}</Td>
                 </Tr>
                 <Tr>
                   <Td>PPD (pixel per degree)</Td>
-                  <Td>{calculatedPPD?.toFixed(2) ?? '-'}</Td>
+                  <Td>{calculatedPPD?.toFixed(2) ?? '-    '}</Td>
                 </Tr>
               </Tbody>
             </Table>
           </VStack>
+          <Box id="canvas-wrap" p={4}>
+            <canvas width="300px" height="400px" ref={canvasRef}></canvas>
+          </Box>
         </HStack>
       </VStack>
     </>
