@@ -1,6 +1,7 @@
 # React Template App
 
 ## Overview
+
 This repository serves as a template for bootstrapping your React projects. It comes with a pre-configured tech stack to get you up and running as fast as possible.
 
 ## How to Use This Template
@@ -11,9 +12,11 @@ This repository serves as a template for bootstrapping your React projects. It c
 4. Start building your React app.
 
 ## Accessing the App
+
 Once you've started the development server with `yarn dev`, you can access the app at `localhost:5174`.
 
 ## Tech Stack
+
 - Yarn: 3.6.4
 - Node: 18.18.2
 - Vite: 4.4.5
@@ -21,14 +24,17 @@ Once you've started the development server with `yarn dev`, you can access the a
 - TypeScript: ^5.0.2
 
 ## Prerequisites
+
 This template assumes that you have [Volta](https://volta.sh/) installed for managing Node and Yarn versions. If you haven't installed it yet, please follow the official documentation.
 
 ## Configured Tools
+
 - **Yarn**: For managing dependencies and running scripts.
 - **ESLint**: For maintaining code quality and consistency.
 - **Prettier**: For automated code formatting.
 
 ## Available Commands
+
 Here are some npm scripts for development.
 
 - `yarn dev`: Start the development server (access the app at `localhost:5174`)
