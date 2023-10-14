@@ -119,7 +119,7 @@ function App() {
     if (pixcelPerCentimeter && centimeterPerDegree) {
       return pixcelPerCentimeter * centimeterPerDegree;
     }
-  }, [calculatedDiagonalPiexels, centimeterPerDegree]);
+  }, [pixcelPerCentimeter, centimeterPerDegree]);
 
   const screenSizeInDegree = useMemo(() => {
     if (calculatedDiagonalScreenSize && distanceToScreen) {
