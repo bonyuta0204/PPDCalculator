@@ -7,6 +7,7 @@ import {
   HStack,
   Input,
   Text,
+  Flex,
   Divider,
   Table,
   Thead,
@@ -115,100 +116,113 @@ function App() {
 
   return (
     <>
-      <VStack spacing={4}>
-        <Text>解像度</Text>
-        <HStack>
-          <Box>
-            <Text>縦 (ピクセル数)</Text>
-            <Input
-              type="number"
-              value={heightInPixels}
-              onChange={handleHeightChange}
-            />
-          </Box>
+      <VStack id="base-container" h="100%" w="100%">
+        <Flex backgroundColor="black" w="100%" p={2} pl={4}>
+          <Text color="white" fontSize="2xl">
+            PPD Calculator
+          </Text>
+        </Flex>
+        <HStack w="100%" alignItems="flex-start">
+          <VStack id="setting-area" spacing={4} flexGrow="1" pt={6}>
+            <Text>解像度</Text>
+            <HStack>
+              <Box>
+                <Text>縦 (ピクセル数)</Text>
+                <Input
+                  type="number"
+                  value={heightInPixels}
+                  onChange={handleHeightChange}
+                />
+              </Box>
 
-          <Box>
-            <Text>横 (ピクセル数)</Text>
-            <Input
-              type="number"
-              value={widthInPixels}
-              onChange={handleWidthChange}
-            />
-          </Box>
+              <Box>
+                <Text>横 (ピクセル数)</Text>
+                <Input
+                  type="number"
+                  value={widthInPixels}
+                  onChange={handleWidthChange}
+                />
+              </Box>
+            </HStack>
+
+            <Text>スクリーンサイズ</Text>
+            <HStack>
+              <Box>
+                <Text>縦 (cm)</Text>
+                <Input
+                  type="number"
+                  value={screenHeight}
+                  onChange={handleSceenHeightChange}
+                />
+              </Box>
+
+              <Box>
+                <Text>横 (cm)</Text>
+                <Input
+                  type="number"
+                  value={screenWidth}
+                  onChange={handleSceenWidthChange}
+                />
+              </Box>
+            </HStack>
+
+            <Box>
+              <Text>画面までの距離 (cm)</Text>
+              <Input
+                type="number"
+                value={distanceToScreen}
+                onChange={handleDistanceChange}
+              />
+            </Box>
+          </VStack>
+
+          <Divider orientation="vertical" />
+
+          <VStack id="result-area" spacing={4} flexGrow="1" pt={6}>
+            <Text>結果</Text>
+            <Table variant="simple" w="80%">
+              <Thead>
+                <Tr>
+                  <Th>項目</Th>
+                  <Th>数値</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td>対角線上のピクセル数</Td>
+                  <Td>{calculatedDiagonalPiexels?.toFixed(2) ?? '-'}</Td>
+                </Tr>
+                <Tr>
+                  <Td>対角線上のスクリーンサイズ</Td>
+                  <Td>{calculatedDiagonalScreenSize?.toFixed(2) ?? '-'}</Td>
+                </Tr>
+                <Tr>
+                  <Td>1cm当たりのピクセル数</Td>
+                  <Td>{pixcelPerCentimeter?.toFixed(2) ?? '-'}</Td>
+                </Tr>
+                <Tr>
+                  <Td>視野角1度あたりのcm</Td>
+                  <Td>{centimeterPerDegree?.toFixed(2) ?? '-'}</Td>
+                </Tr>
+                <Tr>
+                  <Td>スクリーンが占める視野角</Td>
+                  <Td>
+                    {(calculatedDiagonalScreenSize &&
+                      centimeterPerDegree &&
+                      (
+                        calculatedDiagonalScreenSize / centimeterPerDegree
+                      ).toFixed()) ??
+                      '-'}
+                  </Td>
+                </Tr>
+                <Tr>
+                  <Td>PPD (pixel per degree)</Td>
+                  <Td>{calculatedPPD?.toFixed(2) ?? '-'}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </VStack>
         </HStack>
-
-        <Text>スクリーンサイズ</Text>
-        <HStack>
-          <Box>
-            <Text>縦 (cm)</Text>
-            <Input
-              type="number"
-              value={screenHeight}
-              onChange={handleSceenHeightChange}
-            />
-          </Box>
-
-          <Box>
-            <Text>横 (cm)</Text>
-            <Input
-              type="number"
-              value={screenWidth}
-              onChange={handleSceenWidthChange}
-            />
-          </Box>
-        </HStack>
-
-        <Box>
-          <Text>画面までの距離 (cm)</Text>
-          <Input
-            type="number"
-            value={distanceToScreen}
-            onChange={handleDistanceChange}
-          />
-        </Box>
-
-        <Divider />
-
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>項目</Th>
-              <Th>数値</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>対角線上のピクセル数</Td>
-              <Td>{calculatedDiagonalPiexels?.toFixed(2)}</Td>
-            </Tr>
-            <Tr>
-              <Td>対角線上のスクリーンサイズ</Td>
-              <Td>{calculatedDiagonalScreenSize?.toFixed(2)}</Td>
-            </Tr>
-            <Tr>
-              <Td>1cm当たりのピクセル数</Td>
-              <Td>{pixcelPerCentimeter?.toFixed(2)}</Td>
-            </Tr>
-            <Tr>
-              <Td>視野角1度あたりのcm</Td>
-              <Td>{centimeterPerDegree?.toFixed(2)}</Td>
-            </Tr>
-            <Tr>
-              <Td>スクリーンが占める視野角</Td>
-              <Td>
-                {calculatedDiagonalScreenSize &&
-                  centimeterPerDegree &&
-                  (
-                    calculatedDiagonalScreenSize / centimeterPerDegree
-                  ).toFixed()}
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>PPD (pixel per degree)</Td>
-              <Td>{calculatedPPD?.toFixed(2)}</Td>
-            </Tr>
-          </Tbody>
-        </Table>
       </VStack>
     </>
   );
