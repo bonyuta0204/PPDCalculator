@@ -194,6 +194,16 @@ function App() {
               <Td>{centimeterPerDegree?.toFixed(2)}</Td>
             </Tr>
             <Tr>
+              <Td>スクリーンが占める視野角</Td>
+              <Td>
+                {calculatedDiagonalScreenSize &&
+                  centimeterPerDegree &&
+                  (
+                    calculatedDiagonalScreenSize / centimeterPerDegree
+                  ).toFixed()}
+              </Td>
+            </Tr>
+            <Tr>
               <Td>PPD (pixel per degree)</Td>
               <Td>{calculatedPPD?.toFixed(2)}</Td>
             </Tr>
